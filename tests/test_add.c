@@ -3,9 +3,10 @@
 
 #include <stdio.h>
 
-//#define DEBUG
+static uint8_t mem[0x10000] = {
+	TESTBIN
+};
 
-#ifdef DEBUG
 static void dump_state(msp430_t *state)
 {
 	puts("MSP430 dump state:");
@@ -18,34 +19,34 @@ static void dump_state(msp430_t *state)
 	printf("R12:   0x%04x R13:   0x%04x R14:   0x%04x R15: 0x%04x\n\n",
 		state->reg[12], state->reg[13], state->reg[14], state->reg[15]);
 }
-#endif // DEBUG
-
-static uint8_t mem[0x10000] = {
-	TESTBIN
-};
 
 int main()
 {
 	msp430_t state;
-
 	msp430_init_state(&state, mem);
 
-#ifdef DEBUG
-	dump_state(&state);
-#endif // DEBUG
 	int r;
 	do {
 		r = msp430_do_cycle(&state);
 		if (r < 0) {
 			printf("Failed to execute near PC=0x%04x!\n", state.reg[0]);
 			return 1;
-			//break;
 		}
-
-#ifdef DEBUG
-		dump_state(&state);
-#endif // DEBUG
 	} while (r != 1);
+
+	if (state.reg[5] != 28 ||
+	    state.reg[6] != 0 ||
+	    state.reg[7] != 0x18 ||
+	    state.reg[8] != 0x7d24 ||
+	    state.reg[9] != 0xfffd ||
+	    state.reg[12] != 0 ||
+	    state.reg[13] != 0x03 ||
+	    state.reg[14] != 0x01 ||
+	    state.reg[15] != 0x101)
+	{
+		dump_state(&state);
+		return 1;
+	}
 
 	return 0;
 }

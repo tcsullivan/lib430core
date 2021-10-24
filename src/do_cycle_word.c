@@ -116,13 +116,13 @@ int msp430_do_cycle_dual_operand(msp430_t *state, uint16_t opcode)
 		// ADD
 		uint32_t res = *src + *dst;
 		uint16_t sr = 0;
-		if ((int16_t)res < 0)
+		if ((int16_t)(res & 0xFFFF) < 0)
 			sr |= MSP430_SR_N;
-		if (res == 0)
+		if ((res & 0xFFFF) == 0)
 			sr |= MSP430_SR_Z;
 		if ((res & 0xFFFF0000) != 0)
 			sr |= MSP430_SR_C;
-		if (((*src & 0x8000) ^ (*src & 0x8000)) == 0 && (*src & 0x8000) != (res & 0x8000))
+		if (((*src & 0x8000) ^ (*dst & 0x8000)) == 0 && (*src & 0x8000) != (res & 0x8000))
 			sr |= MSP430_SR_V;
 		*dst = (uint16_t)res;
 		state->reg[2] =	sr;
@@ -137,7 +137,7 @@ int msp430_do_cycle_dual_operand(msp430_t *state, uint16_t opcode)
 			sr |= MSP430_SR_Z;
 		if ((res & 0xFFFF0000) != 0)
 			sr |= MSP430_SR_C;
-		if (((*src & 0x8000) ^ (*src & 0x8000)) == 0 && (*src & 0x8000) != (res & 0x8000))
+		if (((*src & 0x8000) ^ (*dst & 0x8000)) == 0 && (*src & 0x8000) != (res & 0x8000))
 			sr |= MSP430_SR_V;
 		*dst = (uint16_t)res;
 		state->reg[2] =	sr;
@@ -152,7 +152,7 @@ int msp430_do_cycle_dual_operand(msp430_t *state, uint16_t opcode)
 			sr |= MSP430_SR_Z;
 		if ((res & 0xFFFF0000) != 0)
 			sr |= MSP430_SR_C;
-		if (((*src & 0x8000) ^ (*src & 0x8000)) == 0 && (*src & 0x8000) != (res & 0x8000))
+		if (((*src & 0x8000) ^ (*dst & 0x8000)) == 0 && (*src & 0x8000) != (res & 0x8000))
 			sr |= MSP430_SR_V;
 		*dst = (uint16_t)res;
 		state->reg[2] =	sr;
@@ -167,7 +167,7 @@ int msp430_do_cycle_dual_operand(msp430_t *state, uint16_t opcode)
 			sr |= MSP430_SR_Z;
 		if ((res & 0xFFFF0000) != 0) // TODO confirm
 			sr |= MSP430_SR_C;
-		if (((*src & 0x8000) ^ (*src & 0x8000)) == 0 && (*src & 0x8000) != (res & 0x8000))
+		if (((*src & 0x8000) ^ (*dst & 0x8000)) == 0 && (*src & 0x8000) != (res & 0x8000))
 			sr |= MSP430_SR_V;
 		*dst = (uint16_t)res;
 		state->reg[2] =	sr;
@@ -182,7 +182,7 @@ int msp430_do_cycle_dual_operand(msp430_t *state, uint16_t opcode)
 			sr |= MSP430_SR_Z;
 		if ((res & 0xFFFF0000) != 0)
 			sr |= MSP430_SR_C;
-		if (((*src & 0x8000) ^ (*src & 0x8000)) == 0 && (*src & 0x8000) != (res & 0x8000))
+		if (((*src & 0x8000) ^ (*dst & 0x8000)) == 0 && (*src & 0x8000) != (res & 0x8000))
 			sr |= MSP430_SR_V;
 		state->reg[2] =	sr;
 		break; }
